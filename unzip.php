@@ -4,6 +4,11 @@ ini_set('upload_max_filesize','1024M');
 session_start();
 $username = 'vue';
 $password = '123456';
+$maxWrongAttempts = 100;
+if (isset($_SESSION['wrong_attemtps_count']) && $_SESSION['wrong_attemtps_count'] > $maxWrongAttempts) {
+    die('Too many attempts');
+}
+
 $_SESSION['message'] ='';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST) && isset($_POST['logout'])) {
     session_destroy();
@@ -16,6 +21,10 @@ if (isset($_POST) && isset($_POST['username']) && isset($_POST['password']))
         $_SESSION['username'] = $username;
     } else {
         $_SESSION['message'] ='Username or password is wrong';
+        if (!isset($_SESSION['wrong_attemtps_count'])) {
+            $_SESSION['wrong_attemtps_count'] = 0;
+        }
+        $_SESSION['wrong_attemtps_count']++;
     }
 }
 
