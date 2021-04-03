@@ -1,4 +1,6 @@
 <?php
+ini_set('max_execution_time', 600); // 10 Minutes
+ini_set('upload_max_filesize','1024M');
 session_start();
 $username = 'vue';
 $password = '123456';
