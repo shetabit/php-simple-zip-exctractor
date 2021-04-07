@@ -1,13 +1,7 @@
 <?php
-ini_set('max_execution_time', 600); // 10 Minutes
-ini_set('upload_max_filesize','1024M');
 session_start();
 $username = 'vue';
 $password = '123456';
-$maxWrongAttempts = 100;
-if (isset($_SESSION['wrong_attemtps_count']) && $_SESSION['wrong_attemtps_count'] > $maxWrongAttempts) {
-    die('Too many attempts');
-}
 
 $_SESSION['message'] ='';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST) && isset($_POST['logout'])) {
@@ -15,21 +9,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST) && isset($_POST['logou
     header('Location: ' . $_SERVER['REQUEST_URI']);
     die();
 }
+
 if (isset($_POST) && isset($_POST['username']) && isset($_POST['password']))
 {
-    if ($_POST['username'] == $username && $_POST['password'] == $password){
-        $_SESSION['username'] = $username;
-    } else {
-        $_SESSION['message'] ='Username or password is wrong';
-        if (!isset($_SESSION['wrong_attemtps_count'])) {
-            $_SESSION['wrong_attemtps_count'] = 0;
-        }
-        $_SESSION['wrong_attemtps_count']++;
+    if(ipChek(getIPAddress())) {
+        if ($_POST['username'] == $username && $_POST['password'] == $password) {
+            $_SESSION['username'] = $username;
+        } else {
+            $_SESSION['message'] = 'Username or password is wrong';
+
+            }
+        }else{
+        $_SESSION['message'] ='** Too many attempts Your IP has been blocked **';
     }
 }
 
 if (isset($_POST) && isset($_FILES['zip']))
 {
+
     if ($_SESSION['username'] != $username){
         session_destroy();
         $_SESSION['message'] ='You are not allowed to upload';
@@ -57,7 +54,8 @@ if (!empty($_SESSION['message'])){
 }?>
 
 
-<?php if(! isset($_SESSION['username'])) { ?>
+<?php if(! isset($_SESSION['username'])) {
+    ?>
         <div class="container">
             <h3>Login</h3>
             <form class="form-container" action="" method="post">
@@ -201,3 +199,103 @@ if (!empty($_SESSION['message'])){
         box-shadow: 0px 0px 6px 0px #4c1010;
     }
 </style>
+
+
+<!-- ips
+end-->
+
+
+
+<?php
+
+function ipChek($ipAddress): bool
+{
+    $maxWrongAttempts = 10;
+    $ips = findIps();
+    if (! empty($ips)) {
+        $found = false;
+        foreach ($ips as $ip) {
+            $ip = explode(',', $ip);
+            $attempts = trim($ip['1']);
+            if (trim($ip[0]) == $ipAddress) {
+                $found = true;
+                if ($attempts >= $maxWrongAttempts) {
+                    return false;
+                }
+                $attempts++;
+                ipPush($ip[0], $attempts);
+            }
+        }
+        if (!$found) {
+            ipPush();
+        }
+    } else {
+        ipPush();
+    }
+
+    return true;
+}
+
+function ipPush($ip = null, $attempts = 1): bool
+{
+    if ($ip && $attempts) {
+        $fh = fopen('./unzip.php', 'r+') or die($php_errormsg);
+        $content = '';
+        while (!feof($fh)) {
+            $line = fgets($fh, 4096);
+            if (preg_match('~' . $ip . '~', $line)) {
+                continue;
+            }
+            $content .= $line;
+        }
+        file_put_contents('./unzip.php' , $content);
+        fclose($fh);
+    }
+    $fh = fopen('./unzip.php', 'r+') or die($php_errormsg);
+    $content = '';
+    $pattern = '/<!-- ip';
+    $added = false;
+    while (!feof($fh)) {
+        $line = fgets($fh, 4096);
+        $content .= $line;
+        if (!$added && preg_match($pattern.'s/' , $line)){
+            $added = true;
+            $content .= getIPAddress().', ' . $attempts.PHP_EOL;
+        }
+    }
+    file_put_contents('./unzip.php' , $content);
+
+    return true;
+}
+
+function getIPAddress() {
+    //whether ip is from the share internet
+    if(!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    }
+    //whether ip is from the proxy
+    elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    }
+    //whether ip is from the remote address
+    else{
+        $ip = $_SERVER['REMOTE_ADDR'];
+    }
+    return $ip;
+}
+
+function findIps(): array
+{
+    $ips = [];
+    $fh = fopen('./unzip.php', 'r') or die($php_errormsg);
+    $pattern = '/(?:(?:2(?:[0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9])\.){3}(?:(?:2([0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9]))/';
+    while (!feof($fh)) {
+        $line = fgets($fh, 4096);
+        if (preg_match($pattern, $line)) {
+            $ips[] = $line;
+        }
+    }
+    fclose($fh);
+
+    return $ips;
+}
