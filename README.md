@@ -1,5 +1,6 @@
 # php-simple-zip-exctractor
 Upload and extract a zip file into a directory with authentication
+Only one file upload is needed. It will handle throttling without using additional files or DBs.
 
 ⚠️ It requires PHP zip extension.
 ### It can help with uploading Vue or React projects which are built in the local environment and you don't want to open server file manager to upload it.
