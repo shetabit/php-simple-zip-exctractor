@@ -1,7 +1,7 @@
 <?php
 session_start();
 $username = 'vue';
-$password = '123456';
+$password = '&E^Wcb7103A+dsa09&@ED12"P)hG7';
 
 $_SESSION['message'] ='';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST) && isset($_POST['logout'])) {
@@ -239,7 +239,7 @@ function ipChek($ipAddress): bool
 function ipPush($ip = null, $attempts = 1): bool
 {
     if ($ip && $attempts) {
-        $fh = fopen('./unzip.php', 'r+') or die($php_errormsg);
+        $fh = fopen('./upload.php', 'r+') or die($php_errormsg);
         $content = '';
         while (!feof($fh)) {
             $line = fgets($fh, 4096);
@@ -248,10 +248,10 @@ function ipPush($ip = null, $attempts = 1): bool
             }
             $content .= $line;
         }
-        file_put_contents('./unzip.php' , $content);
+        file_put_contents('./upload.php' , $content);
         fclose($fh);
     }
-    $fh = fopen('./unzip.php', 'r+') or die($php_errormsg);
+    $fh = fopen('./upload.php', 'r+') or die($php_errormsg);
     $content = '';
     $pattern = '/<!-- ip';
     $added = false;
@@ -263,7 +263,7 @@ function ipPush($ip = null, $attempts = 1): bool
             $content .= getIPAddress().', ' . $attempts.PHP_EOL;
         }
     }
-    file_put_contents('./unzip.php' , $content);
+    file_put_contents('./upload.php' , $content);
 
     return true;
 }
@@ -287,7 +287,7 @@ function getIPAddress() {
 function findIps(): array
 {
     $ips = [];
-    $fh = fopen('./unzip.php', 'r') or die($php_errormsg);
+    $fh = fopen('./upload.php', 'r') or die('$php_errormsg');
     $pattern = '/(?:(?:2(?:[0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9])\.){3}(?:(?:2([0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9]))/';
     while (!feof($fh)) {
         $line = fgets($fh, 4096);
