@@ -3,15 +3,14 @@ session_start();
 
 $config = [
     'username' => 'vue',
-    'password' => '&E^Wcb7103A+dsa09&@ED12"P)hG7',
+    'password' => 'awdfiv4n89n9qcy9cenu80cenu8',
     'allowed_file_extensions' => [
         ''
     ],
     'allow_htaccess' => false // Important: Always disable or it allows code injection!
 ];
-$username = $config['vue'];
+$username = $config['username'];
 $password = $config['password'];
-
 $_SESSION['message'] ='';
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST) && isset($_POST['logout'])) {
     session_destroy();
@@ -68,14 +67,12 @@ if (isset($_POST) && isset($_FILES['zip']))
 
             if (!($FullFileName['name'][strlen($FullFileName['name'])-1] =="/"))
             {
-                if (!preg_match('#\.(php|phtml|gif|png)$#i', $OnlyFileName))
+                if (!preg_match('#\.(php|phtml|php7|php8|pcgi|pcgi3|pcgi4|pcgi5|pchi6|inc)$#i', $OnlyFileName) && $OnlyFileName !=='.htaccess')
                 {
                     copy('zip://'. $target_Path .'#'. $OnlyFileName , $home_folder."/".$FullFileName['name'] );
                 }
             }
         }
-        $zip->close();
-        $zip->extractTo(__DIR__);
         $zip->close();
         $_SESSION['message'] ='Successfully extracted!';
         unlink($target_Path);
@@ -238,6 +235,7 @@ if (!empty($_SESSION['message'])){
 
 
     <!-- ips
+93.117.179.94, 2
 127.0.0.1, 1
     end-->
 
