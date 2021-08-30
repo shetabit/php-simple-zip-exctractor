@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+ini_set('max_execution_time', '180'); // 3 minutes
 $config = [
     'username' => 'vue',
     'password' => 'awdfiv4n89n9qcy9cenu80cenu8',
