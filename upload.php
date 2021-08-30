@@ -55,7 +55,7 @@ if (isset($_POST) && isset($_FILES['zip']))
             $FullFileName = $zip->statIndex($i);
             if ($FullFileName['name'][strlen($FullFileName['name'])-1] =="/")
             {
-                @mkdir($home_folder."/".$FullFileName['name'],0700,true);
+                @mkdir($home_folder."/".$FullFileName['name'],0755,true);
             }
         }
 
