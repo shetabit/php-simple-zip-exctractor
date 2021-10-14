@@ -1,9 +1,24 @@
 <?php
+if (version_compare(phpversion(), '8.0.0', '<')) {
+ die('PHP 8 or more is required'); 
+}
 session_start();
 ini_set('max_execution_time', '180'); // 3 minutes
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+if (!function_exists('str_contains')) {
+    function str_contains(string $haystack, string $needle): bool
+    {
+        return '' === $needle || false !== strpos($haystack, $needle);
+    }
+}
+
+
 $config = [
     'username' => 'vue',
-    'password' => 'awdfiv4n89n9qcy9cenu80cenu8',
+    'password' => '!!!A@pawdfiv4n89n9qcy9cenu80cenu8@!',
     'allowed_file_extensions' => [
         ''
     ],
@@ -53,19 +68,36 @@ if (isset($_POST) && isset($_FILES['zip']))
         {
             $OnlyFileName = $zip->getNameIndex($i);
             $FullFileName = $zip->statIndex($i);
+            
+          $stack = [];
+          $dirs = explode('/', $FullFileName['name']);
+          foreach($dirs as $index => $folder) {
+             if (($index + 1) == count($dirs)) {
+              break;
+             }
+             $stack[] = $folder;
+             $currentPath = '/';
+             foreach ($stack as $oldPath) {
+              $currentPath .= $oldPath . '/'; 
+             }
+             if (!is_dir(__DIR__ . $currentPath)) {
+               @mkdir(__DIR__ . $currentPath,0755,true);
+             }
+            }
+            
             if ($FullFileName['name'][strlen($FullFileName['name'])-1] =="/")
             {
                 @mkdir($home_folder."/".$FullFileName['name'],0755,true);
             }
         }
-
+      
         //unzip into the folders
         for($i = 0; $i < $zip->numFiles; $i++)
         {
             $OnlyFileName = $zip->getNameIndex($i);
             $FullFileName = $zip->statIndex($i);
 
-            if (!($FullFileName['name'][strlen($FullFileName['name'])-1] =="/"))
+            if ($FullFileName['name'][strlen($FullFileName['name'])-1] != "/")
             {
                 if (!preg_match('#\.(php|phtml|php7|php8|pcgi|pcgi3|pcgi4|pcgi5|pchi6|inc)$#i', $OnlyFileName) && $OnlyFileName !=='.htaccess')
                 {
