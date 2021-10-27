@@ -1,7 +1,4 @@
 <?php
-if (version_compare(phpversion(), '8.0.0', '<')) {
- die('PHP 8 or more is required'); 
-}
 session_start();
 ini_set('max_execution_time', '180'); // 3 minutes
 ini_set('display_errors', 1);
