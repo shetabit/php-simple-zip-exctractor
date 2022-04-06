@@ -30,30 +30,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST) && isset($_POST['logou
     die();
 }
 
-if (isset($_POST) && isset($_POST['username']) && isset($_POST['password']))
-{
-    if(ipChek(getIPAddress())) {
+if (isset($_POST) && isset($_POST['username']) && isset($_POST['password'])) {
+    if (ipChek(getIPAddress())) {
         if ($_POST['username'] == $username && $_POST['password'] == $password) {
             $_SESSION['username'] = $username;
         } else {
             $_SESSION['message'] = 'Username or password is wrong';
-
         }
-    }else{
+    } else {
         $_SESSION['message'] ='** Too many attempts Your IP has been blocked **';
     }
 }
 
-if (isset($_POST) && isset($_FILES['zip']))
-{
-
-    if ($_SESSION['username'] != $username){
+if (isset($_POST) && isset($_FILES['zip'])) {
+    if ($_SESSION['username'] != $username) {
         session_destroy();
         $_SESSION['message'] ='You are not allowed to upload';
     }
 
-    $target_Path = __DIR__.'/'.basename( $_FILES['zip']['name'] );
-    if(move_uploaded_file($_FILES['zip']['tmp_name'], $target_Path )){
+    $target_Path = __DIR__.'/'.basename($_FILES['zip']['name']);
+    if (move_uploaded_file($_FILES['zip']['tmp_name'], $target_Path)) {
         $_SESSION['message'] ='Something wrong happened';
     };
 
@@ -61,44 +57,39 @@ if (isset($_POST) && isset($_FILES['zip']))
     if ($zip->open($target_Path) === true) {
         $home_folder = dirname(__FILE__)."/";
         //make all the folders
-        for($i = 0; $i < $zip->numFiles; $i++)
-        {
+        for ($i = 0; $i < $zip->numFiles; $i++) {
             $OnlyFileName = $zip->getNameIndex($i);
             $FullFileName = $zip->statIndex($i);
             
-          $stack = [];
-          $dirs = explode('/', $FullFileName['name']);
-          foreach($dirs as $index => $folder) {
-             if (($index + 1) == count($dirs)) {
-              break;
-             }
-             $stack[] = $folder;
-             $currentPath = '/';
-             foreach ($stack as $oldPath) {
-              $currentPath .= $oldPath . '/'; 
-             }
-             if (!is_dir(__DIR__ . $currentPath)) {
-               @mkdir(__DIR__ . $currentPath,0755,true);
-             }
+            $stack = [];
+            $dirs = explode('/', $FullFileName['name']);
+            foreach ($dirs as $index => $folder) {
+                if (($index + 1) == count($dirs)) {
+                    break;
+                }
+                $stack[] = $folder;
+                $currentPath = '/';
+                foreach ($stack as $oldPath) {
+                    $currentPath .= $oldPath . '/';
+                }
+                if (!is_dir(__DIR__ . $currentPath)) {
+                    @mkdir(__DIR__ . $currentPath, 0755, true);
+                }
             }
             
-            if ($FullFileName['name'][strlen($FullFileName['name'])-1] =="/")
-            {
-                @mkdir($home_folder."/".$FullFileName['name'],0755,true);
+            if ($FullFileName['name'][strlen($FullFileName['name'])-1] =="/") {
+                @mkdir($home_folder."/".$FullFileName['name'], 0755, true);
             }
         }
       
         //unzip into the folders
-        for($i = 0; $i < $zip->numFiles; $i++)
-        {
+        for ($i = 0; $i < $zip->numFiles; $i++) {
             $OnlyFileName = $zip->getNameIndex($i);
             $FullFileName = $zip->statIndex($i);
 
-            if ($FullFileName['name'][strlen($FullFileName['name'])-1] != "/")
-            {
-                if (!preg_match('#\.(php|phtml|php7|php8|pcgi|pcgi3|pcgi4|pcgi5|pchi6|inc)$#i', $OnlyFileName) && $OnlyFileName !=='.htaccess')
-                {
-                    copy('zip://'. $target_Path .'#'. $OnlyFileName , $home_folder."/".$FullFileName['name'] );
+            if ($FullFileName['name'][strlen($FullFileName['name'])-1] != "/") {
+                if (!preg_match('#\.(php|phtml|php7|php8|pcgi|pcgi3|pcgi4|pcgi5|pchi6|inc)$#i', $OnlyFileName) && $OnlyFileName !=='.htaccess') {
+                    copy('zip://'. $target_Path .'#'. $OnlyFileName, $home_folder."/".$FullFileName['name']);
                 }
             }
         }
@@ -111,12 +102,12 @@ if (isset($_POST) && isset($_FILES['zip']))
 }
 
 
-if (!empty($_SESSION['message'])){
+if (!empty($_SESSION['message'])) {
     echo "<p class='message'>".$_SESSION['message']."</p>";
 }?>
 
 
-<?php if(! isset($_SESSION['username'])) {
+<?php if (! isset($_SESSION['username'])) {
     ?>
     <div class="container">
         <h3>Login</h3>
@@ -131,9 +122,10 @@ if (!empty($_SESSION['message'])){
         </form>
     </div>
 
-<?php } ?>
+<?php
+} ?>
 
-<?php if(isset($_SESSION['username']) && $_SESSION['username'] == 'vue') {?>
+<?php if (isset($_SESSION['username']) && $_SESSION['username'] == 'vue') {?>
     <form method="POST">
         <input type="hidden" name="logout" value="logout">
         <button class="logout">Logout</button>
@@ -257,15 +249,15 @@ if (!empty($_SESSION['message'])){
 
         .logout:hover {
             padding: 13px 13px;
-            background: #efa86b;s
-        box-shadow: 0px 0px 6px 0px #4c1010;
+            background: #efa86b;
+            box-shadow: 0px 0px 6px 0px #4c1010;
         }
     </style>
 
 
     <!-- ips
+127.0.0.1, 2
 93.117.179.94, 2
-127.0.0.1, 1
     end-->
 
 
@@ -312,7 +304,7 @@ function ipPush($ip = null, $attempts = 1): bool
             }
             $content .= $line;
         }
-        file_put_contents('./upload.php' , $content);
+        file_put_contents('./upload.php', $content);
         fclose($fh);
     }
     $fh = fopen('./upload.php', 'r+') or die($php_errormsg);
@@ -322,19 +314,20 @@ function ipPush($ip = null, $attempts = 1): bool
     while (!feof($fh)) {
         $line = fgets($fh, 4096);
         $content .= $line;
-        if (!$added && preg_match($pattern.'s/' , $line)){
+        if (!$added && preg_match($pattern.'s/', $line)) {
             $added = true;
             $content .= getIPAddress().', ' . $attempts.PHP_EOL;
         }
     }
-    file_put_contents('./upload.php' , $content);
+    file_put_contents('./upload.php', $content);
 
     return true;
 }
 
-function getIPAddress() {
+function getIPAddress()
+{
     //whether ip is from the share internet
-    if(!empty($_SERVER['HTTP_CLIENT_IP'])) {
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
         $ip = $_SERVER['HTTP_CLIENT_IP'];
     }
     //whether ip is from the proxy
@@ -342,7 +335,7 @@ function getIPAddress() {
         $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
     }
     //whether ip is from the remote address
-    else{
+    else {
         $ip = $_SERVER['REMOTE_ADDR'];
     }
     return $ip;
