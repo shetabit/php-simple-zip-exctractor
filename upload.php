@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST) && isset($_POST['logou
 
 //security check
 if (isset($_POST) && isset($_POST['username']) && isset($_POST['password'])) {
-    if (ipChek(getIPAddress()) || true) {
+    if (ipChek(getIPAddress())) {
         if ($_POST['username'] == $username && $_POST['password'] == $password) {
             $_SESSION['username'] = $username;
         } else {
