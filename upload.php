@@ -1,7 +1,7 @@
 <?php
 
 session_start();
-ini_set('max_execution_time', '180'); // 3 minutes
+ini_set('max_execution_time', '300'); // 5 minutes
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
