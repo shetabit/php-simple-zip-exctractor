@@ -124,7 +124,7 @@ echo "</p>";
     <div class="container">
         <h3>UploadeR</h3>
         <br>
-        <form class="form-container" action="" method="post">
+        <form class="form-container" method="post">
             <br>
             <label>
                 <input placeholder="username" class="form-control" type="text" name="username">
@@ -139,7 +139,7 @@ echo "</p>";
 <?php
 } ?>
 
-<?php if (isset($_SESSION['username']) && $_SESSION['username'] == 'vue') { ?>
+<?php if (isset($_SESSION['username']) && $_SESSION['username'] == $username) { ?>
     <form method="POST">
         <input type="hidden" name="logout" value="logout">
         <button class="logout">Logout</button>
