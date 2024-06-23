@@ -1,5 +1,5 @@
 # php-simple-zip-exctractor
-a lightweight PHP script that allows you to upload and extract a ZIP file to a designated directory on your server. It includes built-in authentication to ensure only authorized users can access this functionality.
+A lightweight PHP script that allows you to upload and extract a ZIP file to a designated directory on your server. It includes built-in authentication to ensure only authorized users can access this functionality.
 
 Benefits:
 
