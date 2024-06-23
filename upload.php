@@ -45,7 +45,6 @@ if (isset($_POST) && isset($_POST['username']) && isset($_POST['password'])) {
         $_SESSION['message'] = '** Too many attempts Your IP has been blocked **';
     }
 }
-// var_dump($_FILES);
 
 if (isset($_POST) && isset($_FILES['zip'])) {
     if (isset($_SESSION['username']) && $_SESSION['username'] != $username) {
